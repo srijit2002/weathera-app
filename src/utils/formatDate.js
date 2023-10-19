@@ -1,4 +1,5 @@
 export const formatDate = (dateTimeString) => {
+  if (!dateTimeString) return;
   const months = [
     "January",
     "February",
@@ -26,8 +27,6 @@ export const formatDate = (dateTimeString) => {
 
   const dateParts = dateTimeString.split(" ");
   const datePart = dateParts[0];
-  const timePart = dateParts[1];
-
   const dateObj = new Date(datePart);
 
   if (isNaN(dateObj.getTime())) {

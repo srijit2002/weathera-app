@@ -5,12 +5,24 @@ import { formatTime } from "../../utils/formatTime";
 import "./Dashboard.css";
 import { getCurrentWeatherData } from "../../api/getCurrentWeatherData";
 import { AiOutlineSearch } from "react-icons/ai";
+import { LineChart } from "../Chart/LineChart";
+import { getHistoricalData } from "../../api/getHistoricalData";
 
 //Start of the main functional component
 const Dashboard = () => {
   const [weatherData, setWeatherData] = useState({});
   const [location, setLocation] = useState({});
   const [query, setQuery] = useState("kolkata");
+  const [historicalData, setHistoricalData] = useState([]);
+  const keys = [
+    { key: "temp", title: "Temparature" },
+    { key: "humidity", title: "Humidity" }
+  ];
+  const fetchHistoricalData = async () => {
+    const data = await getHistoricalData(10, query);
+    setHistoricalData(data);
+  };
+
   useEffect(() => {
     getCurrentWeatherData(query, (data, err) => {
       if (!err) {
@@ -20,12 +32,14 @@ const Dashboard = () => {
         console.log(err);
       }
     });
+    fetchHistoricalData();
   }, []);
   const handleSearch = async () => {
     getCurrentWeatherData(query, (data, err) => {
       if (!err) {
         setLocation(data?.location);
         setWeatherData(data?.current);
+        fetchHistoricalData();
       } else {
         console.log(err);
       }
@@ -122,6 +136,20 @@ const Dashboard = () => {
           <p>Wind Speed</p>
         </div>
       </div>
+      {historicalData?.length>0 && (
+        <section>
+          {keys.map(({ key, title }) => (
+            <LineChart
+              key={key}
+              chartTitle={title}
+              dataset={historicalData.map(({ date, info }) => ({
+                date: new Date(date),
+                value: info[key],
+              }))}
+            />
+          ))}
+        </section>
+      )}
     </div>
   );
 };
