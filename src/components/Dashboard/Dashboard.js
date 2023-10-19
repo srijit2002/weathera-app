@@ -136,7 +136,7 @@ const Dashboard = () => {
           <p>Wind Speed</p>
         </div>
       </div>
-      {historicalData?.length>0 && (
+      {historicalData?.length>0 ? (
         <section>
           {keys.map(({ key, title }) => (
             <LineChart
@@ -149,7 +149,7 @@ const Dashboard = () => {
             />
           ))}
         </section>
-      )}
+      ):<h2>Loading Chart...</h2>}
     </div>
   );
 };
